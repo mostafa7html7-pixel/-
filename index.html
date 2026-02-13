@@ -9,29 +9,19 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
-    <!-- مكتبة Confetti للتأثيرات الاحتفالية -->
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
         :root {
-            /* الألوان الجديدة (مريحة للعين - فاتحة افتراضياً) */
-            --bg-color: #1e1e1e; /* خلفية رصاصي غامق سادة */
-            --card-bg: rgba(255, 255, 255, 0.05); /* خلفية زجاجية */
             /* الألوان الجديدة (ثيم رمضاني بنفسجي وذهبي) */
             --bg-color: #240b36; /* خلفية بنفسجي غامق */
             --card-bg: rgba(255, 255, 255, 0.08); /* خلفية زجاجية */
             --text-color: #ffffff; /* نص أبيض للتباين */
             
             /* ألوان نيون ساطعة */
-            --neon-green: #39ff14;
-            --neon-gold: #ffd700;
-            --neon-red: #ff3131;
             --neon-green: #00f260;
             --neon-gold: #f9d423;
             --neon-red: #ff0055;
             --neon-blue: #00c6ff;
             
-            --gradient-main: linear-gradient(135deg, #ffd700, #39ff14);
-            --shadow-color: rgba(0, 0, 0, 0.08); /* ظل خفيف جداً */
             --gradient-main: linear-gradient(135deg, #f9d423, #ff0055);
             --shadow-color: rgba(0, 0, 0, 0.25); /* ظل متوسط */
             
@@ -39,15 +29,11 @@
             --pattern-color: rgba(255, 255, 255, 0.03); /* زخرفة خفيفة */
         }
 
-        /* الوضع الليلي (اختياري - رمادي غامق وليس أسود) */
         /* الوضع الليلي (ثيم أزرق ليلي عميق) */
         body.dark-mode {
-            --bg-color: #2c3e50;
-            --card-bg: #34495e;
             --bg-color: #0f2027;
             --card-bg: rgba(32, 58, 67, 0.6);
             --text-color: #ecf0f1;
-            --shadow-color: rgba(0, 0, 0, 0.2);
             --shadow-color: rgba(0, 0, 0, 0.4);
             --pattern-color: rgba(255, 255, 255, 0.05); /* أبيض خفيف للزخرفة */
             --neon-gold: #e2e2e2; /* فضي */
@@ -65,26 +51,12 @@
             background-color: var(--bg-color);
             color: var(--text-color);
             overflow-x: hidden;
-            
-            /* زخرفة إسلامية هندسية */
-            background-image: 
-                radial-gradient(circle at 50% 50%, transparent 60%, var(--pattern-color) 61%, var(--pattern-color) 65%, transparent 66%),
-                radial-gradient(circle at 0 0, transparent 60%, var(--pattern-color) 61%, var(--pattern-color) 65%, transparent 66%),
-                radial-gradient(circle at 100% 0, transparent 60%, var(--pattern-color) 61%, var(--pattern-color) 65%, transparent 66%),
-                radial-gradient(circle at 0 100%, transparent 60%, var(--pattern-color) 61%, var(--pattern-color) 65%, transparent 66%),
-                radial-gradient(circle at 100% 100%, transparent 60%, var(--pattern-color) 61%, var(--pattern-color) 65%, transparent 66%);
-            background-size: 80px 80px;
-            background-attachment: fixed;
             transition: background-color 0.3s, color 0.3s;
-            animation: skyCycle 60s infinite alternate; /* تغيير لون الخلفية ببطء */
         }
 
         /* تنسيق الهيدر */
         header {
-            background: rgba(30, 30, 30, 0.85); /* خلفية شفافة (Glassmorphism) */
             background: rgba(36, 11, 54, 0.85); /* خلفية شفافة (Glassmorphism) */
-            backdrop-filter: blur(12px); /* تأثير التمويه الزجاجي */
-            -webkit-backdrop-filter: blur(12px);
             padding: 10px 20px;
             position: sticky;
             top: 0;
@@ -94,7 +66,8 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            flex-wrap: wrap;
+            flex-wrap: nowrap; /* منع التفاف العناصر للحفاظ على سطر واحد */
+            height: 65px; /* ارتفاع ثابت لمنع اهتزاز التصميم */
             transition: box-shadow 0.3s;
         }
 
@@ -117,74 +90,60 @@
             position: absolute;
             top: 65px; /* رفع القائمة قليلاً */
             left: 10px; /* محاذاة لليسار */
-            width: 160px; /* تصغير العرض جداً */
-            background: #000000; /* خلفية سوداء قوية */
+            width: 200px; /* عرض مناسب للقراءة */
+            background: #1a1a1a; /* خلفية داكنة بسيطة وسريعة */
             display: none; /* مخفية افتراضياً */
-            padding: 5px;
-            border: 2px solid var(--neon-gold); /* حدود نيون للقائمة */
-            border-radius: 10px; /* حواف دائرية */
-            box-shadow: 0 0 20px var(--neon-gold), inset 0 0 10px rgba(255, 215, 0, 0.2); /* توهج نيون قوي */
+            padding: 8px 0;
+            border: 1px solid rgba(255, 255, 255, 0.1); /* حدود خفيفة */
+            border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5); /* ظل ناعم */
             z-index: 1001;
         }
 
-        nav:hover {
-            box-shadow: 0 0 30px var(--neon-gold);
-        }
         nav.active { 
             display: block; 
-            animation: slideInSide 0.4s ease-out;
+            animation: fadeInMenu 0.3s ease-out forwards;
         }
 
-        @keyframes slideInSide {
-            from { opacity: 0; transform: translateX(-30px); }
-            to { opacity: 1; transform: translateX(0); }
+        @keyframes fadeInMenu {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         nav ul {
             display: flex;
             flex-direction: column; /* جعل العناصر عمودية دائماً */
             list-style: none;
-            gap: 5px; /* تقليل المسافات */
+            gap: 0;
             align-items: stretch; /* ملء عرض القائمة */
         }
 
         nav a {
-            color: #fff;
+            color: #eee;
             text-decoration: none;
-            font-weight: 600;
-            font-size: 0.8rem; /* تصغير الخط */
-            padding: 8px 5px;
-            border-radius: 5px;
-            transition: 0.2s;
-            width: 100%; /* ملء عرض القائمة الصغيرة */
+            font-size: 0.95rem;
+            padding: 12px 15px;
+            transition: background 0.2s, padding-right 0.2s;
             text-align: right; /* محاذاة لليمين لترتيب الأيقونات */
             display: block;
-            background: transparent;
-            border: 1px solid transparent;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
         }
 
         nav a:hover, nav a.active {
-            background: var(--neon-gold);
-            color: #000;
-            box-shadow: 0 0 15px var(--neon-gold);
-            transform: scale(1.05);
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--neon-gold);
+            padding-right: 20px; /* حركة بسيطة عند التحويم */
         }
 
         /* تنسيق حركة الأيقونات */
         .nav-icon {
             display: inline-block;
-            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-
-        nav a:hover .nav-icon, .settings-content:hover .nav-icon {
-            transform: scale(1.3) rotate(-15deg);
+            margin-left: 8px;
         }
 
         /* تنسيق عنصر الإعدادات داخل القائمة */
         .settings-item {
-            margin-top: 5px;
-            padding-top: 5px;
-            border-top: 1px solid rgba(0, 0, 0, 0.05);
+            padding: 10px 15px;
         }
         
         .settings-content {
@@ -192,10 +151,7 @@
             justify-content: space-between;
             align-items: center;
             color: var(--text-color);
-            padding: 10px 15px;
-            background: rgba(0, 0, 0, 0.03);
-            border-radius: 8px;
-            font-weight: 500;
+            font-size: 0.9rem;
         }
 
         .theme-btn-mini {
@@ -223,6 +179,7 @@
             display: flex;
             gap: 10px;
             align-items: center;
+            flex-shrink: 0; /* منع انكماش أدوات التحكم */
         }
 
         /* زر القائمة (الهامبرغر) */
@@ -258,7 +215,6 @@
             top: 100%;
             left: 50%;
             transform: translateX(-50%);
-            background: rgba(30, 30, 30, 0.95);
             background: rgba(36, 11, 54, 0.95);
             padding: 15px;
             border-radius: 10px;
@@ -296,7 +252,6 @@
         }
         
         .surah-select option {
-            background: #333;
             background: #240b36;
             color: #fff;
         }
@@ -335,9 +290,7 @@
 
         /* البطاقات العامة */
         .card {
-            background: rgba(255, 255, 255, 0.03); /* زجاجي شفاف أكثر */
-            backdrop-filter: blur(20px); /* تمويه أقوى */
-            -webkit-backdrop-filter: blur(20px);
+            background: rgba(255, 255, 255, 0.05);
             padding: 20px;
             border-radius: 15px;
             box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5); /* ظل عميق */
@@ -410,69 +363,13 @@
             color: #fff;
             text-shadow: 0 0 10px var(--neon-gold), 0 0 20px var(--neon-gold); /* توهج النص */
             margin-bottom: 15px;
-            
-            /* تأثير الآلة الكاتبة */
             display: inline-block;
-            overflow: hidden;
-            white-space: nowrap;
-            border-left: 4px solid var(--neon-gold); /* مؤشر الكتابة */
-            width: 0;
-            animation: 
-                typing 3.5s steps(30) forwards,
-                blink 0.75s step-end 5, /* يومض 5 مرات ثم يتوقف */
-                pulseGlow 3s infinite alternate,
-                hideCursor 0s linear 3.75s forwards, /* إخفاء المؤشر بعد الانتهاء */
-                floatText 3s ease-in-out infinite 3.5s; /* حركة طفو خفيفة بعد الكتابة */
             vertical-align: middle;
         }
         .hero-desc {
             font-size: 1.1rem;
             color: var(--text-color);
             padding: 0 10px;
-        }
-
-        @keyframes pulseGlow {
-            from { text-shadow: 0 0 10px var(--neon-gold), 0 0 20px var(--neon-gold); }
-            to { text-shadow: 0 0 20px var(--neon-gold), 0 0 40px var(--neon-gold), 0 0 60px var(--neon-gold); }
-        }
-
-        @keyframes floatText {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
-        }
-
-        @keyframes typing {
-            from { width: 0 }
-            to { width: 14ch; } /* عرض النص تقريباً */
-        }
-
-        @keyframes blink {
-            50% { border-color: transparent; }
-        }
-        
-        @keyframes hideCursor {
-            to { border-left-color: transparent; }
-        }
-
-        /* تأثير تساقط النجوم */
-        #falling-container {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 0;
-        }
-        .falling-item {
-            position: absolute;
-            top: -50px;
-            color: var(--neon-gold);
-            opacity: 0.05; /* تقليل الشفافية لراحة العين */
-            animation: fall linear infinite;
-        }
-        @keyframes fall {
-            to { transform: translateY(110vh) rotate(360deg); }
         }
 
         /* تحسينات الموبايل */
@@ -482,10 +379,52 @@
         }
 
         @media (max-width: 768px) {
-            header { padding: 10px 15px; }
-            .logo { font-size: 1.4rem; }
+            header { padding: 0 10px; height: 60px; }
+            .logo { font-size: 1rem; white-space: nowrap; }
             .btn-control { padding: 6px 10px; font-size: 0.8rem; }
             .menu-toggle { font-size: 1.5rem; }
+            
+            /* تحسين مظهر التوقيت في الموبايل */
+            #quran-time-display {
+                font-size: 0.65rem !important;
+                padding: 2px 4px !important;
+            }
+        }
+
+        /* تنسيق عناصر التحكم في الصوت بالهيدر */
+        #quran-time-display {
+            font-size: 0.75rem;
+            color: var(--neon-green);
+            font-family: 'Courier New', monospace;
+            background: rgba(0, 0, 0, 0.4);
+            padding: 4px 8px;
+            border-radius: 6px;
+            border: 1px solid var(--neon-green);
+            white-space: nowrap;
+        }
+
+        #header-quran-btn {
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: rgba(0, 242, 96, 0.1);
+            border: 2px solid var(--neon-green);
+            color: var(--neon-green);
+            box-shadow: 0 0 10px rgba(0, 242, 96, 0.2);
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-size: 1.5rem;
+            padding-left: 4px; /* محاذاة بصرية للمثلث */
+        }
+        
+        #header-quran-btn:hover {
+            background: var(--neon-green);
+            color: #000;
+            box-shadow: 0 0 20px var(--neon-green), 0 0 40px var(--neon-green);
+            transform: scale(1.1) rotate(360deg);
         }
 
         /* تنسيق الحقول بحدود نيون */
@@ -499,213 +438,6 @@
         input:focus, textarea:focus, input:hover, textarea:hover {
             box-shadow: 0 0 15px var(--neon-gold) !important;
             outline: none;
-        }
-
-        /* فانوس رمضان المعلق */
-        .lantern-box {
-            position: fixed;
-            top: 75px; /* أسفل الهيدر مباشرة */
-            /* left: 35%; تمت إزالته لتحديد المواقع فردياً */
-            margin-left: 0;
-            z-index: 2000;
-            pointer-events: auto; /* تفعيل النقر */
-            cursor: pointer;
-            animation: swing 3s infinite ease-in-out alternate;
-            transform-origin: top center;
-            transition: transform 0.3s, top 0.5s, opacity 0.5s;
-        }
-
-        .lantern-box.hidden {
-            top: -150px; /* تحريك للأعلى خارج الشاشة */
-            opacity: 0; /* إخفاء */
-            pointer-events: none; /* منع النقر أثناء الاختفاء */
-            
-            /* متغيرات الألوان الافتراضية */
-            --l-main: #ffd700;
-            --l-dark: #b8860b;
-            --l-glow: #ff8c00;
-        }
-
-        .lantern-box:hover {
-            transform: scale(1.05); /* تكبير بسيط عند المرور */
-        }
-        
-        /* ألوان الفوانيس المختلفة */
-        .l-gold   { --l-main: #ffd700; --l-dark: #b8860b; --l-glow: #ff8c00; }
-        .l-red    { --l-main: #ff0055; --l-dark: #990033; --l-glow: #ff0055; }
-        .l-green  { --l-main: #00f260; --l-dark: #008032; --l-glow: #00f260; }
-        .l-blue   { --l-main: #00c6ff; --l-dark: #0072ff; --l-glow: #00c6ff; }
-        .l-purple { --l-main: #9d50bb; --l-dark: #6e48aa; --l-glow: #9d50bb; }
-
-        .lantern-rope {
-            width: 1px;
-            height: 15px; /* حبل قصير جداً */
-            background: linear-gradient(to right, var(--l-dark), var(--l-main), var(--l-dark));
-            margin: 0 auto;
-        }
-        
-        /* هيكل الفانوس الواقعي */
-        .lantern-inner {
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        /* القبة العلوية */
-        .lantern-cap {
-            width: 8px;
-            height: 4px;
-            background: linear-gradient(45deg, var(--l-dark), var(--l-main));
-            border-radius: 4px 4px 2px 2px;
-            z-index: 2;
-        }
-
-        /* جسم الفانوس الزجاجي */
-        .lantern-glass {
-            width: 12px;
-            height: 15px;
-            background: rgba(255, 255, 255, 0.15);
-            border: 1px solid var(--l-main);
-            border-radius: 4px;
-            position: relative;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            box-shadow: 0 0 5px var(--l-main), inset 0 0 5px var(--l-main);
-            transition: all 0.5s;
-        }
-
-        /* القاعدة */
-        .lantern-base {
-            width: 10px;
-            height: 3px;
-            background: linear-gradient(45deg, var(--l-dark), var(--l-main));
-            border-radius: 0 0 3px 3px;
-            margin-top: -2px;
-        }
-        
-        /* الضوء الداخلي */
-        .lantern-light {
-            width: 4px;
-            height: 6px;
-            background: radial-gradient(#fff, var(--l-main));
-            border-radius: 50%;
-            box-shadow: 0 0 15px #fff, 0 0 30px var(--l-main), 0 0 60px var(--l-glow), 0 0 100px var(--l-glow); /* توهج قوي جداً عند التشغيل */
-            animation: flicker 1.5s infinite alternate, colorChange 5s infinite linear; /* إضافة تغيير الألوان */
-            transition: all 0.5s;
-        }
-
-        /* حالة الإطفاء */
-        .lantern-box.off .lantern-light {
-            opacity: 0.2;
-            animation: none;
-            box-shadow: none;
-            background: #555;
-        }
-
-        .lantern-box.off .lantern-glass {
-            background: rgba(0, 0, 0, 0.3);
-            box-shadow: none;
-            border-color: #555;
-        }
-        
-        @keyframes swing {
-            from { transform: rotate(4deg); }
-            to { transform: rotate(-4deg); }
-        }
-        
-        @keyframes flicker {
-            0% { opacity: 1; transform: scale(1); }
-            100% { opacity: 0.7; transform: scale(0.9); }
-        }
-
-        @keyframes colorChange {
-            0% { filter: hue-rotate(0deg); }
-            100% { filter: hue-rotate(360deg); }
-        }
-
-        /* تنسيق التلميح (Tooltip) لاسم السورة */
-        .lantern-box::after {
-            content: attr(data-surah-name);
-            position: absolute;
-            top: 100%; /* أسفل الفانوس */
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(0, 0, 0, 0.85);
-            color: var(--l-main);
-            padding: 5px 8px;
-            border-radius: 5px;
-            font-size: 0.75rem;
-            white-space: nowrap;
-            opacity: 0;
-            visibility: hidden;
-            transition: opacity 0.3s, visibility 0.3s;
-            pointer-events: none;
-            border: 1px solid var(--l-main);
-            margin-top: 5px;
-            box-shadow: 0 0 5px var(--l-glow);
-            z-index: 2001;
-        }
-
-        .lantern-box:hover::after {
-            opacity: 1;
-            visibility: visible;
-        }
-
-        /* أنيميشن تغيير لون السماء (غروب وليل) */
-        @keyframes skyCycle {
-            0% { background-color: #240b36; } /* بنفسجي غامق */
-            25% { background-color: #5e2d48; } /* غروب (بنفسجي محمر) */
-            50% { background-color: #2c3e50; } /* أزرق ليلي */
-            75% { background-color: #0f2027; } /* ليل حالك */
-            100% { background-color: #240b36; }
-        }
-
-        /* الأجرام السماوية (شمس وقمر) */
-        .celestial-body {
-            position: fixed;
-            z-index: 0; /* خلف المحتوى */
-            pointer-events: none;
-            animation-duration: 60s; /* نفس مدة skyCycle */
-            animation-iteration-count: infinite;
-            animation-direction: alternate;
-            animation-timing-function: ease-in-out;
-        }
-
-        .sun {
-            width: 100px;
-            height: 100px;
-            background: radial-gradient(circle, #f9d423, #ff4e50);
-            box-shadow: 0 0 40px #f9d423, 0 0 80px #ff4e50;
-            border-radius: 50%;
-            left: 10%;
-            animation-name: sunMove;
-        }
-
-        .moon {
-            width: 80px;
-            height: 80px;
-            background: transparent;
-            box-shadow: -25px 15px 0 0 #f6f1d5; /* شكل الهلال */
-            border-radius: 50%;
-            left: 85%;
-            animation-name: moonMove;
-            filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.5));
-        }
-
-        @keyframes sunMove {
-            0% { top: 5%; opacity: 1; transform: scale(1); }
-            30% { top: 40%; opacity: 0.5; transform: scale(0.8); }
-            50% { top: 60%; opacity: 0; transform: scale(0.5); }
-            100% { top: 60%; opacity: 0; }
-        }
-
-        @keyframes moonMove {
-            0% { top: 100%; opacity: 0; transform: rotate(0deg); }
-            40% { top: 80%; opacity: 0; }
-            50% { top: 15%; opacity: 1; transform: rotate(-10deg); }
-            100% { top: 10%; opacity: 1; transform: rotate(-20deg); }
         }
 
         /* تنسيقات صفحة المسلسلات الاحترافية */
@@ -742,7 +474,6 @@
             border-radius: 15px;
             margin-bottom: 40px;
             border: 1px solid rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
         }
 
         .series-tags {
@@ -829,7 +560,6 @@
         /* تحسينات قسم الاستماع الجديد */
         .listen-card {
             background: rgba(20, 20, 20, 0.6);
-            backdrop-filter: blur(15px);
             border: 2px solid var(--neon-gold);
             border-radius: 20px;
             padding: 15px; /* تصغير الحواشي أكثر */
@@ -942,68 +672,199 @@
         }
 
         /* تأثير وميض زر التشغيل */
-        @keyframes pulse-green {
-            0% { text-shadow: 0 0 5px var(--neon-green); transform: scale(1); }
-            50% { text-shadow: 0 0 20px var(--neon-green), 0 0 30px var(--neon-green); transform: scale(1.1); }
-            100% { text-shadow: 0 0 5px var(--neon-green); transform: scale(1); }
+        @keyframes pulse-ring {
+            0% { box-shadow: 0 0 0 0 rgba(0, 242, 96, 0.7); }
+            70% { box-shadow: 0 0 0 8px rgba(0, 242, 96, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(0, 242, 96, 0); }
         }
 
         .playing-pulse {
-            animation: pulse-green 1.5s infinite;
+            animation: pulse-ring 1.5s infinite;
+            background: var(--neon-green) !important;
+            color: #000 !important;
+        }
+
+        /* تنسيق المهام المنجزة */
+        .task-completed span {
+            text-decoration: line-through;
+            color: var(--neon-green);
+            opacity: 0.8;
+        }
+        
+        .delete-task-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1.1rem;
+            margin-right: 10px;
+            transition: transform 0.2s;
+            padding: 5px;
+        }
+        
+        .delete-task-btn:hover {
+            transform: scale(1.2);
+        }
+
+        /* تنسيق صفوف مواقيت الصلاة */
+        .prayer-time-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            transition: 0.3s;
+        }
+        .prayer-time-row:last-child { border-bottom: none; }
+        .prayer-time-row:hover {
+            background: rgba(255, 215, 0, 0.1);
+            padding-right: 30px;
+            padding-left: 30px;
+        }
+
+        /* القائمة الدائرية العائمة */
+        .orbit-wrapper {
+            position: relative;
+            width: 320px;
+            height: 320px;
+            margin: 40px auto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            animation: orbit-spin 60s linear infinite; /* دوران مستمر للقائمة */
+        }
+        
+        .orbit-center {
+            position: absolute;
+            width: 120px;
+            height: 120px;
+            background: radial-gradient(circle, var(--neon-gold), transparent 70%);
+            border-radius: 50%;
+            opacity: 0.1;
+            animation: pulse-center 4s infinite ease-in-out;
+            pointer-events: none;
+        }
+
+        .orbit-item {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            width: auto;
+            height: auto;
+            background: transparent; /* إزالة الخلفية */
+            border: none; /* إزالة الحدود */
+            box-shadow: none;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            color: var(--neon-gold); /* لون ذهبي للنص */
+            font-size: 1.1rem; /* تكبير الخط */
+            font-weight: bold;
+            text-shadow: 0 0 10px rgba(0,0,0,0.8), 0 0 20px var(--neon-gold); /* توهج النص */
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            /* توزيع العناصر في دائرة */
+            transform: translate(-50%, -50%) rotate(var(--angle)) translate(135px) rotate(calc(-1 * var(--angle)));
+        }
+
+        .orbit-item:hover {
+            background: transparent;
+            color: #fff;
+            transform: translate(-50%, -50%) rotate(var(--angle)) translate(150px) rotate(calc(-1 * var(--angle))) scale(1.15);
+            z-index: 10;
+            text-shadow: 0 0 20px var(--neon-gold), 0 0 40px var(--neon-red);
+        }
+
+        .orbit-text {
+            display: block;
+            animation: orbit-counter-spin 60s linear infinite; /* دوران عكسي للحفاظ على استقامة النص */
+        }
+
+        @keyframes pulse-center {
+            0%, 100% { transform: scale(1); opacity: 0.1; }
+            50% { transform: scale(1.5); opacity: 0.2; }
+        }
+
+        @keyframes orbit-spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes orbit-counter-spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(-360deg); }
+        }
+
+        @media (max-width: 400px) {
+            .orbit-wrapper { transform: scale(0.85); }
+        }
+
+        /* صورة الوسط */
+        .central-image {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            width: 100px;
+            height: 100px;
+            margin-left: -50px; /* توسيط الصورة */
+            margin-top: -50px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--neon-gold);
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+            z-index: 5;
+            animation: orbit-counter-spin 60s linear infinite; /* دوران عكسي لتبقى ثابتة */
+        }
+
+        /* شاشة التحميل (Loader) */
+        #loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: var(--bg-color);
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 0.5s ease-out;
+        }
+
+        .loader-spinner {
+            width: 60px;
+            height: 60px;
+            border: 5px solid rgba(255, 255, 255, 0.1);
+            border-top: 5px solid var(--neon-gold);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            box-shadow: 0 0 20px var(--neon-gold);
+        }
+        
+        .loader-text {
+            margin-top: 20px;
+            color: var(--neon-gold);
+            font-size: 1.2rem;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 0.6; }
+            50% { opacity: 1; }
+            100% { opacity: 0.6; }
         }
     </style>
 </head>
 <body>
-    <!-- فوانيس رمضان (5 فوانيس بألوان مختلفة) -->
-    <div class="lantern-box l-gold off" data-surah-name="سورة البقرة" data-audio="https://server8.mp3quran.net/afs/002.mp3" style="left: 10%; animation-delay: 0s;" onclick="toggleLantern(this)">
-        <div class="lantern-rope"></div>
-        <div class="lantern-inner">
-            <div class="lantern-cap"></div>
-            <div class="lantern-glass">
-                <div class="lantern-light"></div>
-            </div>
-            <div class="lantern-base"></div>
-        </div>
-    </div>
-    <div class="lantern-box l-red off" data-surah-name="سورة آل عمران" data-audio="https://server8.mp3quran.net/afs/003.mp3" style="left: 30%; animation-delay: -0.6s;" onclick="toggleLantern(this)">
-        <div class="lantern-rope"></div>
-        <div class="lantern-inner">
-            <div class="lantern-cap"></div>
-            <div class="lantern-glass">
-                <div class="lantern-light"></div>
-            </div>
-            <div class="lantern-base"></div>
-        </div>
-    </div>
-    <div class="lantern-box l-green off" data-surah-name="سورة النساء" data-audio="https://server8.mp3quran.net/afs/004.mp3" style="left: 50%; animation-delay: -1.2s;" onclick="toggleLantern(this)">
-        <div class="lantern-rope"></div>
-        <div class="lantern-inner">
-            <div class="lantern-cap"></div>
-            <div class="lantern-glass">
-                <div class="lantern-light"></div>
-            </div>
-            <div class="lantern-base"></div>
-        </div>
-    </div>
-    <div class="lantern-box l-blue off" data-surah-name="سورة المائدة" data-audio="https://server8.mp3quran.net/afs/005.mp3" style="left: 70%; animation-delay: -1.8s;" onclick="toggleLantern(this)">
-        <div class="lantern-rope"></div>
-        <div class="lantern-inner">
-            <div class="lantern-cap"></div>
-            <div class="lantern-glass">
-                <div class="lantern-light"></div>
-            </div>
-            <div class="lantern-base"></div>
-        </div>
-    </div>
-    <div class="lantern-box l-purple off" data-surah-name="سورة الأنعام" data-audio="https://server8.mp3quran.net/afs/006.mp3" style="left: 90%; animation-delay: -2.4s;" onclick="toggleLantern(this)">
-        <div class="lantern-rope"></div>
-        <div class="lantern-inner">
-            <div class="lantern-cap"></div>
-            <div class="lantern-glass">
-                <div class="lantern-light"></div>
-            </div>
-            <div class="lantern-base"></div>
-        </div>
+    <!-- شاشة التحميل -->
+    <div id="loader">
+        <div class="loader-spinner"></div>
+        <div class="loader-text">جاري التحميل...</div>
     </div>
 
     <header>
@@ -1029,7 +890,9 @@
                 <li class="settings-item">
                     <div class="settings-content">
                         <span><span class="nav-icon">⚙️</span> الإعدادات</span>
-                        <button class="theme-btn-mini" onclick="toggleTheme()" title="تغيير الإضاءة"><span id="theme-icon">🌙</span></button>
+                        <div style="display: flex; gap: 5px;">
+                            <button class="theme-btn-mini" onclick="toggleTheme()" title="تغيير الإضاءة"><span id="theme-icon">🌙</span></button>
+                        </div>
                     </div>
                 </li>
             </ul>
@@ -1037,10 +900,10 @@
 
         <div class="controls">
             <!-- توقيت السورة (يظهر عند التشغيل) -->
-            <span id="quran-time-display" style="display: none; font-size: 0.8rem; color: var(--neon-green); font-family: monospace; margin-left: 10px; direction: ltr;">00:00 / 00:00</span>
+            <span id="quran-time-display" style="display: none; margin-left: 8px; direction: ltr;">00:00 / 00:00</span>
             
             <!-- زر التحكم في القرآن من الهيدر (يظهر عند التشغيل) -->
-            <div id="header-quran-btn" class="audio-toggle" style="display: none; margin-left: 10px; font-size: 1.8rem;" onclick="toggleHeaderQuran()" title="إيقاف/تشغيل القرآن">▶</div>
+            <div id="header-quran-btn" style="display: none; margin-left: 8px;" onclick="toggleHeaderQuran()" title="إيقاف/تشغيل القرآن">▶</div>
             <div class="menu-toggle" onclick="toggleMenu()">☰</div>
         </div>
     </header>
@@ -1052,24 +915,22 @@
                     <h1 class="hero-title">رمضان يجمعنا</h1>
                 </div>
                 <p class="hero-desc">أهلاً بكم في بوابتكم الرمضانية الشاملة. تقبل الله منا ومنكم صالح الأعمال.</p>
-                <div style="margin-top: 30px;">
-                    <button class="btn-neon" onclick="showPage('tasks', document.querySelectorAll('nav a')[7])">ابـدأ مهامك اليوم</button>
-                </div>
             </div>
             
-            <div class="grid-container">
-                <div class="card">
-                    <h3 style="color: var(--neon-gold)">دعاء اليوم</h3>
-                    <p>اللهم أعنا على صيامه وقيامه، وجنبنا فيه من هفواته وآثامه.</p>
-                </div>
-                <div class="card">
-                    <h3 style="color: var(--neon-red)">العد التنازلي للإفطار</h3>
-                    <p id="countdown">جارِ الحساب...</p>
-                </div>
-                <div class="card">
-                    <h3 style="color: var(--neon-green)">حديث شريف</h3>
-                    <p>"من صام رمضان إيماناً واحتساباً غُفر له ما تقدم من ذنبه"</p>
-                </div>
+            <!-- القائمة الدائرية العائمة -->
+            <div class="orbit-wrapper">
+                <div class="orbit-center"></div>
+                <img src="https://www.cairo24.com/Upload/libfiles/94/8/635.jpg" class="central-image" alt="فانوس رمضان">
+                
+                <a href="#" class="orbit-item" style="--angle: 0deg;" onclick="showPage('series', this)"><span class="orbit-text">روائع</span></a>
+                <a href="#" class="orbit-item" style="--angle: 40deg;" onclick="showPage('quran-read', this)"><span class="orbit-text">المصحف</span></a>
+                <a href="#" class="orbit-item" style="--angle: 80deg;" onclick="showPage('quran-listen', this)"><span class="orbit-text">التلاوات</span></a>
+                <a href="#" class="orbit-item" style="--angle: 120deg;" onclick="showPage('prayer', this)"><span class="orbit-text">الصلاة</span></a>
+                <a href="#" class="orbit-item" style="--angle: 160deg;" onclick="showPage('rules', this)"><span class="orbit-text">الفقه</span></a>
+                <a href="#" class="orbit-item" style="--angle: 200deg;" onclick="showPage('tips', this)"><span class="orbit-text">النصائح</span></a>
+                <a href="#" class="orbit-item" style="--angle: 240deg;" onclick="showPage('tasks', this)"><span class="orbit-text">الطاعات</span></a>
+                <a href="#" class="orbit-item" style="--angle: 280deg;" onclick="showPage('about', this)"><span class="orbit-text">عننا</span></a>
+                <a href="#" class="orbit-item" style="--angle: 320deg;" onclick="showPage('contact', this)"><span class="orbit-text">راسلنا</span></a>
             </div>
         </section>
 
@@ -1079,43 +940,43 @@
             <div class="video-grid">
                 <!-- فيديو 1 -->
                 <div class="video-container">
-                    <iframe src="https://www.youtube.com/embed/ZUG8vkgV7Dg?si=0heavmwk4pkip45O" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+                    <iframe loading="lazy" src="https://www.youtube.com/embed/ZUG8vkgV7Dg?si=0heavmwk4pkip45O" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
                 </div>
                 <!-- فيديو 2 -->
                 <div class="video-container">
-                    <iframe src="https://www.youtube.com/embed/TTR3MKuduUk?si=K8ZknNUjB0CTMK5o" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+                    <iframe loading="lazy" src="https://www.youtube.com/embed/TTR3MKuduUk?si=K8ZknNUjB0CTMK5o" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
                 </div>
                 <!-- فيديو 3 -->
                 <div class="video-container">
-                    <iframe src="https://www.youtube.com/embed/eFWpVKr7V3w?si=zvqLcIwxq1CO-9XW" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+                    <iframe loading="lazy" src="https://www.youtube.com/embed/eFWpVKr7V3w?si=zvqLcIwxq1CO-9XW" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
                 </div>
                 <!-- فيديو 4 -->
                 <div class="video-container">
-                    <iframe src="https://www.youtube.com/embed/pfvjfUt_KYE?si=AB6HxODqyKMgbFCC" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+                    <iframe loading="lazy" src="https://www.youtube.com/embed/pfvjfUt_KYE?si=AB6HxODqyKMgbFCC" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
                 </div>
                 <!-- فيديو 5 -->
                 <div class="video-container">
-                    <iframe src="https://www.youtube.com/embed/avLECJdSO_k?si=VUsm7JiCW4aWE2-d" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+                    <iframe loading="lazy" src="https://www.youtube.com/embed/avLECJdSO_k?si=VUsm7JiCW4aWE2-d" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
                 </div>
                 <!-- فيديو 6 -->
                 <div class="video-container">
-                    <iframe src="https://www.youtube.com/embed/B9ysqlrrBwY?si=lgG5QORzBeWUJsoV" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+                    <iframe loading="lazy" src="https://www.youtube.com/embed/B9ysqlrrBwY?si=lgG5QORzBeWUJsoV" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
                 </div>
                 <!-- فيديو 7 -->
                 <div class="video-container">
-                    <iframe src="https://www.youtube.com/embed/9kZkTpOKmMY?si=vL04a1COVuOgfpWt" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+                    <iframe loading="lazy" src="https://www.youtube.com/embed/9kZkTpOKmMY?si=vL04a1COVuOgfpWt" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
                 </div>
                 <!-- فيديو 8 -->
                 <div class="video-container">
-                    <iframe src="https://www.youtube.com/embed/O4bUvLJfA8s?si=B9Cyw84La6OFZ0rB" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+                    <iframe loading="lazy" src="https://www.youtube.com/embed/O4bUvLJfA8s?si=B9Cyw84La6OFZ0rB" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
                 </div>
                 <!-- فيديو 9 -->
                 <div class="video-container">
-                    <iframe src="https://www.youtube.com/embed/_lRWOKxENIw?si=zLDrocYajI2_7rgt" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+                    <iframe loading="lazy" src="https://www.youtube.com/embed/_lRWOKxENIw?si=zLDrocYajI2_7rgt" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
                 </div>
                 <!-- فيديو 10 -->
                 <div class="video-container">
-                    <iframe src="https://www.youtube.com/embed/rubcM_-wNcA?si=uOLxjMNBRtdGK8B_" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+                    <iframe loading="lazy" src="https://www.youtube.com/embed/rubcM_-wNcA?si=uOLxjMNBRtdGK8B_" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
                 </div>
             </div>
         </section>
@@ -1213,12 +1074,40 @@
         <section id="rules" class="page-section">
             <h1>شروط وأحكام الصيام</h1>
             <div class="card">
+                <p style="margin-bottom: 15px; line-height: 1.8;">
+                    شروط الصيام في الإسلام تنقسم إلى شروط وجوب (تجعل الصيام فرضاً) وشروط صحة (تجعل الصيام مقبولاً). أبرز الشروط هي الإسلام، البلوغ، العقل، والقدرة على الصيام (الإطاقة). كما تشترط الصحة (الخلو من الأعذار كالحيض/النفاس)، الإقامة، والنية المبيتة من الليل. يجب صوم رمضان على كل مسلم مكلف قادر.
+                </p>
+
+                <h3 style="color: var(--neon-gold); margin-top: 20px;">أولاً: شروط وجوب الصيام (من يجب عليه الصيام)</h3>
                 <ul style="padding-right: 20px; line-height: 2;">
-                    <li><strong style="color: var(--neon-gold)">الإسلام:</strong> لا يجب الصيام على الكافر.</li>
-                    <li><strong style="color: var(--neon-gold)">البلوغ:</strong> لا يجب على الصبي، ولكن يؤمر به للتدريب.</li>
-                    <li><strong style="color: var(--neon-gold)">العقل:</strong> لا يجب على المجنون.</li>
-                    <li><strong style="color: var(--neon-gold)">القدرة:</strong> يعفى العاجز لكبر سن أو مرض مزمن (وعليه الفدية).</li>
-                    <li><strong style="color: var(--neon-gold)">الإقامة:</strong> المسافر له رخصة الفطر والقضاء.</li>
+                    <li><strong style="color: var(--neon-green)">الإسلام:</strong> لا يجب الصوم على غير المسلم.</li>
+                    <li><strong style="color: var(--neon-green)">البلوغ:</strong> لا يجب الصوم على الصبي الصغير حتى يبلغ.</li>
+                    <li><strong style="color: var(--neon-green)">العقل:</strong> لا يجب على المجنون، فالمجنون لا صيام عليه ولا قضاء.</li>
+                    <li><strong style="color: var(--neon-green)">القدرة والإطاقة:</strong> فلا يجب الصوم على العاجز حقيقة (كالمريض المزمن) أو حكماً (كالحامل والمرضع إذا خافتا على أنفسهما).</li>
+                    <li><strong style="color: var(--neon-green)">الإقامة:</strong> فلا يجب الصيام على المسافر سفراً يُباح فيه القصر، وله الفطر والقضاء.</li>
+                </ul>
+
+                <h3 style="color: var(--neon-gold); margin-top: 20px;">ثانياً: شروط صحة الصيام (متى يُقبل الصيام)</h3>
+                <ul style="padding-right: 20px; line-height: 2;">
+                    <li><strong style="color: var(--neon-green)">النية:</strong> يجب تبييت النية من الليل قبل الفجر، لقول النبي ﷺ: "من لم يبيت الصيام من الليل فلا صيام له".</li>
+                    <li><strong style="color: var(--neon-green)">العقل:</strong> فلا يصح صوم المجنون.</li>
+                    <li><strong style="color: var(--neon-green)">التميز:</strong> فلا يصح صوم الصبي غير المميز.</li>
+                    <li><strong style="color: var(--neon-green)">النقاء من دم الحيض والنفاس:</strong> فلا يصح الصوم من الحائض والنفساء، بل يجب عليهما الإفطار والقضاء.</li>
+                    <li><strong style="color: var(--neon-green)">الوقت القابل للصوم:</strong> فلا يصح صوم أيام العيدين وأيام التشريق (أيام محرمة).</li>
+                </ul>
+
+                <h3 style="color: var(--neon-gold); margin-top: 20px;">أركان الصيام (لا يصح إلا بها)</h3>
+                <ul style="padding-right: 20px; line-height: 2;">
+                    <li><strong style="color: var(--neon-green)">النية:</strong> ومحلها القلب وتسبق الفجر.</li>
+                    <li><strong style="color: var(--neon-green)">الإمساك عن المفطرات:</strong> الامتناع عن الأكل والشرب والجماع من طلوع الفجر الصادق حتى غروب الشمس.</li>
+                </ul>
+
+                <h3 style="color: var(--neon-gold); margin-top: 20px;">من أُبيح لهم الفطر (أعذار مبيحة)</h3>
+                <ul style="padding-right: 20px; line-height: 2;">
+                    <li><strong style="color: var(--neon-green)">المريض:</strong> الذي يضره الصوم.</li>
+                    <li><strong style="color: var(--neon-green)">المسافر:</strong> سفر طاعة أو سفر مباح.</li>
+                    <li><strong style="color: var(--neon-green)">الحائض والنفساء:</strong> (يحرم عليهما الصوم ويجب القضاء).</li>
+                    <li><strong style="color: var(--neon-green)">العاجز عن الصوم:</strong> (كالشيخ الكبير والمريض مرضاً لا يُرجى برؤه، وعليهم الفدية).</li>
                 </ul>
             </div>
         </section>
@@ -1227,36 +1116,67 @@
             <h1>مهامي في رمضان</h1>
             <div class="card">
                 <div style="display: flex; gap: 10px; margin-bottom: 20px;">
-                    <input type="text" placeholder="أضف مهمة جديدة..." style="flex: 1; padding: 10px; border-radius: 5px; border: 1px solid #ddd;">
-                    <button class="btn-neon" style="margin: 0;" onclick="alert('تمت إضافة المهمة (تجريبي)')">إضافة</button>
+                    <input type="text" id="task-input" placeholder="أضف مهمة جديدة..." style="flex: 1; padding: 10px; border-radius: 5px; border: 1px solid #ddd;" onkeypress="handleTaskKeyPress(event)">
+                    <button class="btn-neon" style="margin: 0; min-width: 100px; display: flex; align-items: center; justify-content: center; gap: 5px;" onclick="addTask()"><span>➕</span> إضافة</button>
                 </div>
-                <ul class="task-list">
-                    <li>
-                        <span>قراءة جزء من القرآن</span>
-                        <input type="checkbox">
-                    </li>
-                    <li>
-                        <span>صلاة التراويح</span>
-                        <input type="checkbox">
-                    </li>
-                    <li>
-                        <span>إخراج صدقة يومية</span>
-                        <input type="checkbox">
-                    </li>
+                <ul id="task-list" class="task-list">
+                    <!-- سيتم ملء المهام بواسطة JavaScript -->
                 </ul>
             </div>
         </section>
 
         <section id="tips" class="page-section">
             <h1>نصائح رمضانية</h1>
+            
+            <!-- صورة النصائح -->
+            <div class="card" style="text-align: center; padding: 0; overflow: hidden;">
+                <img src="https://static.hiamag.com/styles/1000x1000/public/2024-03/Ramadan-Celebration.jpg" alt="نصائح إدارة الوقت في رمضان" style="width: 100%; max-height: 400px; object-fit: cover; border-bottom: 2px solid var(--neon-gold);">
+            </div>
+
             <div class="grid-container">
                 <div class="card">
-                    <h3 style="color: var(--neon-green)">نصيحة صحية</h3>
-                    <p>تجنب شرب كميات كبيرة من الماء دفعة واحدة عند السحور، بل وزعها طوال فترة الإفطار.</p>
+                    <h3 style="color: var(--neon-gold); margin-bottom: 10px;">⏳ تنظيم الوقت والإنتاجية</h3>
+                    <p style="line-height: 1.6;">
+                        يرتكز تنظيم الوقت في رمضان على تحديد أهداف روحية وعملية، وإعداد جدول مرن يوازن بين العبادة والإنتاجية والنوم (لا يقل عن 6 ساعات).
+                    </p>
+                    <ul style="margin-top: 10px; padding-right: 20px; line-height: 1.8;">
+                        <li><strong>التخطيط المسبق:</strong> وضع جدول يومي وأسبوعي للعبادات والمسؤوليات.</li>
+                        <li><strong>استثمار الأوقات الذهبية:</strong> استغلال الساعات الأولى بعد السحور للأعمال الصعبة والقرآن.</li>
+                        <li><strong>تجنب تعدد المهام:</strong> التركيز على مهمة واحدة في كل مرة لرفع الإنتاجية.</li>
+                        <li><strong>استغلال أوقات الفراغ:</strong> استثمار وقت الانتظار والمواصلات في الذكر والاستماع للمحاضرات.</li>
+                    </ul>
                 </div>
+
                 <div class="card">
-                    <h3 style="color: var(--neon-gold)">نصيحة غذائية</h3>
-                    <p>ابدأ إفطارك بالتمر والماء لتهيئة المعدة قبل تناول الوجبة الرئيسية.</p>
+                    <h3 style="color: var(--neon-green); margin-bottom: 10px;">📅 جدول مقترح للعبادة والعمل</h3>
+                    <ul style="padding-right: 20px; line-height: 1.8;">
+                        <li><strong>قبل الفجر:</strong> سحور، صلاة قيام، استغفار، صلاة الفجر، قراءة قرآن.</li>
+                        <li><strong>صباحاً:</strong> العمل/الدراسة (استغلال التركيز العالي).</li>
+                        <li><strong>ظهراً/عصراً:</strong> صلوات مفروضة، راحة قصيرة لتجديد النشاط.</li>
+                        <li><strong>قبل الإفطار:</strong> دعاء، تحضير بسيط للإفطار، ذكر.</li>
+                        <li><strong>بعد الإفطار:</strong> إفطار، صلاة مغرب، راحة، صلاة تراويح.</li>
+                        <li><strong>ليلاً:</strong> وقت عائلي/عبادة شخصية، نوم مبكر.</li>
+                    </ul>
+                </div>
+
+                <div class="card">
+                    <h3 style="color: var(--neon-blue); margin-bottom: 10px;">🍎 الصحة والتغذية</h3>
+                    <ul style="padding-right: 20px; line-height: 1.8;">
+                        <li><strong>وجبة السحور:</strong> أخرها قدر الإمكان، وركز على الكربوهيدرات المعقدة والألياف (مثل الفول والشوفان).</li>
+                        <li><strong>ترطيب الجسم:</strong> اشرب 2-3 لتر ماء بين الإفطار والسحور، وتجنب الكافيين وقت السحور.</li>
+                        <li><strong>تجنب التخمة:</strong> ابدأ بالتمر والشوربة، وانتظر قليلاً قبل الوجبة الرئيسية لتجنب الخمول.</li>
+                        <li><strong>النوم:</strong> الحفاظ على نوم لا يقل عن 6 ساعات للحفاظ على الطاقة والتركيز.</li>
+                    </ul>
+                </div>
+
+                <div class="card">
+                    <h3 style="color: var(--neon-red); margin-bottom: 10px;">💡 نصائح عملية للاستعداد</h3>
+                    <ul style="padding-right: 20px; line-height: 1.8;">
+                        <li><strong>تجديد النية:</strong> ابدأ بتحديد نوايا واضحة لكل عمل تقوم به.</li>
+                        <li><strong>التهيئة الجسدية:</strong> قلل الكافيين تدريجياً قبل رمضان لتجنب الصداع.</li>
+                        <li><strong>ركن العبادة:</strong> جهز مكاناً هادئاً في المنزل للصلاة والقراءة لزيادة الخشوع.</li>
+                        <li><strong>تقليل الوقت في المطبخ:</strong> تحضير وجبات بسيطة أو تخطيط الوجبات مسبقاً.</li>
+                    </ul>
                 </div>
             </div>
         </section>
@@ -1288,12 +1208,6 @@
         <source src="https://server8.mp3quran.net/afs/001.mp3" type="audio/mpeg">
         <!-- رابط احتياطي -->
         <source src="https://www.soundjay.com/nature/sounds/crickets-1.mp3" type="audio/mpeg">
-    </audio>
-
-    <!-- صوت الفانوس (موسيقى رمضانية خافتة) -->
-    <audio id="lantern-audio" loop>
-        <!-- موسيقى شرقية هادئة (مثال) -->
-        <source src="https://cdn.pixabay.com/audio/2021/11/24/audio_82497d096c.mp3" type="audio/mpeg">
     </audio>
 
     <script>
@@ -1334,71 +1248,12 @@
         function toggleMenu() {
             const nav = document.getElementById('nav-menu');
             nav.classList.toggle('active');
-            
-            // إخفاء الفوانيس عند فتح القائمة
-            updateLanternsVisibility();
         }
-
-        // دالة العداد التنازلي للإفطار
-        function startCountdown() {
-            const countdownElement = document.getElementById('countdown');
-            
-            function update() {
-                const now = new Date();
-                const iftar = new Date();
-                
-                // تحديد موعد الإفطار افتراضياً (6:15 مساءً)
-                // يمكنك تغيير الأرقام هنا (الساعة، الدقيقة) حسب توقيت مدينتك
-                iftar.setHours(18, 15, 0, 0);
-                
-                // إذا تجاوزنا الوقت الحالي، نحسب لليوم التالي
-                if (now > iftar) {
-                    iftar.setDate(iftar.getDate() + 1);
-                }
-                
-                const diff = iftar - now;
-                const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
-                const minutes = Math.floor((diff / (1000 * 60)) % 60);
-                const seconds = Math.floor((diff / 1000) % 60);
-                
-                countdownElement.innerText = `${hours} ساعة : ${minutes} دقيقة : ${seconds} ثانية`;
-            }
-            
-            setInterval(update, 1000);
-            update(); // تشغيل فوري لتجنب التأخير ثانية واحدة
-        }
-        startCountdown();
-
-        // إنشاء تأثير تساقط النجوم والفوانيس
-        function createFallingEffect() {
-            const container = document.createElement('div');
-            container.id = 'falling-container';
-            document.body.appendChild(container);
-            
-            const symbols = ['★', '✨', '🌙', '🏮', '⭐'];
-            const count = 40;
-            
-            for(let i=0; i<count; i++) {
-                const el = document.createElement('div');
-                el.className = 'falling-item';
-                el.textContent = symbols[Math.floor(Math.random() * symbols.length)];
-                el.style.left = Math.random() * 100 + 'vw';
-                el.style.animationDuration = (Math.random() * 15 + 10) + 's'; // سرعة متفاوتة
-                el.style.animationDelay = (Math.random() * -20) + 's'; // بدء عشوائي
-                el.style.fontSize = (Math.random() * 1.5 + 0.5) + 'rem'; // أحجام مختلفة
-                container.appendChild(el);
-            }
-        }
-        createFallingEffect();
 
         // دالة تشغيل/إيقاف الصوت
         function toggleAudio() {
             const audio = document.getElementById('bg-audio');
             const btn = document.getElementById('audio-icon');
-            
-            // تبديل حالة الفوانيس عند النقر على زر الصوت (إخفاء/إظهار)
-            const lanterns = document.querySelectorAll('.lantern-box');
-            lanterns.forEach(l => l.classList.toggle('hidden'));
             
             // ضبط مستوى الصوت ليكون مناسباً للخلفية
             // audio.volume = 0.4; // تمت إزالته ليتحكم المستخدم عبر الشريط
@@ -1440,65 +1295,6 @@
             } else {
                 // إذا كان متوقفاً، نقوم بتشغيله وتحديث الأيقونة
                 toggleAudio();
-            }
-        }
-
-        // دالة تبديل إضاءة الفانوس
-        function toggleLantern(element) {
-            const lanternAudio = document.getElementById('lantern-audio');
-            const allLanterns = document.querySelectorAll('.lantern-box');
-            const isTurningOn = element.classList.contains('off');
-
-            if (isTurningOn) {
-                // إطفاء جميع الفوانيس الأخرى أولاً
-                allLanterns.forEach(l => l.classList.add('off'));
-                
-                // إضاءة الفانوس المختار
-                element.classList.remove('off');
-                
-                // تشغيل السورة المخصصة لهذا الفانوس
-                const audioSrc = element.getAttribute('data-audio');
-                if (audioSrc) {
-                    lanternAudio.src = audioSrc;
-                    lanternAudio.volume = 0.3; 
-                    lanternAudio.play().catch(e => console.log("Audio error:", e));
-                }
-                
-                // إطلاق قصاصات ورقية (Confetti) من موقع الفانوس
-                const rect = element.getBoundingClientRect();
-                // حساب الموقع النسبي للفانوس بالنسبة للشاشة
-                const x = (rect.left + rect.width / 2) / window.innerWidth;
-                const y = (rect.top + rect.height / 2) / window.innerHeight;
-
-                confetti({
-                    particleCount: 100,
-                    spread: 70,
-                    origin: { x: x, y: y },
-                    colors: ['#ffd700', '#ff0055', '#00f260', '#ffffff'], // ألوان رمضانية
-                    disableForReducedMotion: true
-                });
-            } else {
-                // إطفاء الفانوس وإيقاف الصوت
-                element.classList.add('off');
-                lanternAudio.pause();
-                lanternAudio.currentTime = 0;
-            }
-        }
-
-        // إخفاء الفوانيس عند التمرير لأسفل (مع استمرار الصوت)
-        window.addEventListener('scroll', function() {
-            updateLanternsVisibility();
-        });
-
-        // دالة موحدة للتحكم في ظهور الفوانيس
-        function updateLanternsVisibility() {
-            const lanterns = document.querySelectorAll('.lantern-box');
-            const navActive = document.getElementById('nav-menu').classList.contains('active');
-            
-            if (window.scrollY > 50 || navActive) {
-                lanterns.forEach(l => l.classList.add('hidden'));
-            } else {
-                lanterns.forEach(l => l.classList.remove('hidden'));
             }
         }
 
@@ -1640,11 +1436,13 @@ function toggleHeaderQuran() {
     if (player.paused) {
         player.play();
         btn.textContent = '⏸';
+        btn.style.paddingLeft = '0'; // تصحيح المحاذاة عند الإيقاف المؤقت
         btn.style.color = 'var(--neon-green)';
         btn.classList.add('playing-pulse');
     } else {
         player.pause();
         btn.textContent = '▶';
+        btn.style.paddingLeft = '4px'; // إعادة المحاذاة للمثلث
         btn.style.color = 'var(--neon-red)';
         btn.classList.remove('playing-pulse');
     }
@@ -1665,6 +1463,7 @@ document.getElementById('quran-player').addEventListener('pause', function() {
     const btn = document.getElementById('header-quran-btn');
     if (btn) {
         btn.textContent = '▶';
+        btn.style.paddingLeft = '4px';
         btn.style.color = 'var(--neon-red)';
         btn.classList.remove('playing-pulse');
     }
@@ -1674,6 +1473,7 @@ document.getElementById('quran-player').addEventListener('play', function() {
     const btn = document.getElementById('header-quran-btn');
     if (btn) {
         btn.textContent = '⏸';
+        btn.style.paddingLeft = '0';
         btn.style.color = 'var(--neon-green)';
         btn.classList.add('playing-pulse');
     }
@@ -1748,6 +1548,84 @@ function updateProgressBar(e) {
 
 // تشغيل دالة التعبئة فور تحميل الصفحة
 populateListenSurahs();
+
+        // --- إدارة المهام (To-Do List) ---
+        
+        // تحميل المهام عند البدء أو استخدام مهام افتراضية
+        let tasks = JSON.parse(localStorage.getItem('ramadanTasks')) || [
+            { text: "قراءة جزء من القرآن", completed: false },
+            { text: "صلاة التراويح", completed: false },
+            { text: "إخراج صدقة يومية", completed: false }
+        ];
+
+        function renderTasks() {
+            const list = document.getElementById('task-list');
+            if (!list) return;
+            
+            list.innerHTML = '';
+            tasks.forEach((task, index) => {
+                const li = document.createElement('li');
+                li.className = task.completed ? 'task-completed' : '';
+                li.innerHTML = `
+                    <span onclick="toggleTask(${index})" style="cursor:pointer; flex:1; text-align: right; transition: 0.3s;">${task.text}</span>
+                    <div style="display:flex; align-items:center;">
+                        <input type="checkbox" ${task.completed ? 'checked' : ''} onchange="toggleTask(${index})" style="width: 20px; height: 20px; cursor: pointer; accent-color: var(--neon-green);">
+                        <button class="delete-task-btn" onclick="deleteTask(${index})" title="حذف المهمة">❌</button>
+                    </div>
+                `;
+                list.appendChild(li);
+            });
+        }
+
+        function addTask() {
+            const input = document.getElementById('task-input');
+            const text = input.value.trim();
+            
+            if (text) {
+                tasks.push({ text: text, completed: false });
+                input.value = '';
+                saveTasks();
+                renderTasks();
+            } else {
+                alert("الرجاء كتابة نص المهمة أولاً");
+            }
+        }
+
+        function handleTaskKeyPress(e) {
+            if (e.key === 'Enter') {
+                addTask();
+            }
+        }
+
+        function toggleTask(index) {
+            tasks[index].completed = !tasks[index].completed;
+            saveTasks();
+            renderTasks();
+        }
+
+        function deleteTask(index) {
+            if(confirm('هل أنت متأكد من حذف هذه المهمة؟')) {
+                tasks.splice(index, 1);
+                saveTasks();
+                renderTasks();
+            }
+        }
+
+        function saveTasks() {
+            localStorage.setItem('ramadanTasks', JSON.stringify(tasks));
+        }
+
+        // تشغيل عرض المهام
+        renderTasks();
+
+        // إخفاء شاشة التحميل عند اكتمال تحميل الصفحة
+        window.addEventListener('load', function() {
+            const loader = document.getElementById('loader');
+            loader.style.opacity = '0';
+            setTimeout(() => {
+                loader.style.visibility = 'hidden';
+            }, 500);
+        });
     </script>
 </body>
 </html>
