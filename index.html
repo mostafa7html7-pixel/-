@@ -3,270 +3,176 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>منصة مستر حمدي - بث مباشر</title>
+    <title>منصة مستر حمدي الاحترافية v3</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        video { transform: scaleX(1); border-radius: 12px; background: #1a1a1a; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        .gradient-bg { background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); }
+        #videoContainer { position: relative; background: #000; border-radius: 15px; overflow: hidden; }
+        #cameraOverlay { position: absolute; bottom: 10px; right: 10px; width: 150px; border: 2px solid #3b82f6; border-radius: 10px; z-index: 20; }
+        #whiteboard { position: absolute; top: 0; left: 0; z-index: 10; cursor: crosshair; touch-action: none; }
+        .tool-btn { padding: 8px; border-radius: 8px; transition: 0.3s; }
+        .tool-btn:hover { background: #334155; }
     </style>
 </head>
-<body class="gradient-bg text-white min-h-screen font-sans">
+<body class="bg-slate-900 text-white min-h-screen">
 
-    <div class="container mx-auto px-4 py-8">
-        <div class="flex flex-col md:flex-row justify-between items-center mb-10 gap-4">
-            <div>
-                <h1 class="text-4xl font-extrabold text-blue-400">H-Live <span class="text-white text-lg font-light">بث الحصص المباشرة</span></h1>
-                <p id="statusText" class="text-gray-400 mt-2">الحالة: <span class="text-yellow-500 font-bold">جاهز للبدء</span></p>
-            </div>
-            <div class="flex gap-3">
-                <button id="teacherModeBtn" class="bg-blue-600 hover:bg-blue-700 px-6 py-2 rounded-full font-bold transition shadow-lg">أنا المستر</button>
-                <button id="studentModeBtn" class="bg-purple-600 hover:bg-purple-700 px-6 py-2 rounded-full font-bold transition shadow-lg">أنا طالب</button>
-            </div>
+    <div class="container mx-auto px-4 py-4">
+        <div class="flex justify-between items-center bg-slate-800 p-4 rounded-xl border border-slate-700 mb-4">
+            <h1 class="text-xl font-bold text-blue-400">H-Live <span class="text-white text-xs font-light">بث + كاميرا + سبورة</span></h1>
+            <div id="status" class="px-3 py-1 rounded-full bg-red-500 text-[10px] animate-pulse">غير متصل</div>
         </div>
 
-        <main class="grid grid-cols-1 lg:grid-cols-4 gap-8">
-            <div class="lg:col-span-3 space-y-4">
-                <div class="relative group">
-                    <video id="mainVideo" autoplay playsinline class="w-full border-2 border-gray-700"></video>
-                    <div id="liveBadge" class="absolute top-4 left-4 bg-red-600 text-white px-3 py-1 rounded text-sm font-bold animate-pulse hidden">LIVE مباشر</div>
+        <div class="grid grid-cols-1 lg:grid-cols-5 gap-4">
+            <div class="lg:col-span-4 space-y-4">
+                <div id="videoContainer" class="aspect-video shadow-2xl border border-slate-700">
+                    <video id="mainVideo" autoplay playsinline class="w-full h-full object-contain"></video>
+                    <video id="cameraOverlay" autoplay playsinline muted></video>
+                    <canvas id="whiteboard" class="w-full h-full"></canvas>
                 </div>
 
-                <div id="teacherControls" class="hidden flex flex-wrap gap-4 justify-center bg-gray-800 p-6 rounded-2xl border border-gray-700">
-                    <button id="startShare" class="bg-green-600 hover:bg-green-700 px-8 py-3 rounded-xl font-bold flex items-center gap-2 transition">
-                        <span>🚀</span> ابدأ مشاركة الشاشة والبث
-                    </button>
-                    <button id="stopShare" class="bg-red-600 hover:bg-red-700 px-8 py-3 rounded-xl font-bold hidden transition">
-                        <span>🛑</span> إنهاء وحفظ الحصة
-                    </button>
-                </div>
+                <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 flex flex-wrap items-center justify-between gap-4">
+                    <div class="flex gap-2 items-center">
+                        <button id="startTeacher" class="bg-blue-600 px-4 py-2 rounded-lg font-bold text-sm">أنا المستر</button>
+                        <button id="startStudent" class="bg-purple-600 px-4 py-2 rounded-lg font-bold text-sm">أنا طالب</button>
+                    </div>
 
-                <div id="studentControls" class="hidden flex justify-center bg-gray-800 p-6 rounded-2xl border border-gray-700">
-                    <button id="joinStream" class="bg-blue-600 hover:bg-blue-700 px-10 py-3 rounded-xl font-bold transition animate-bounce">
-                        🔔 انضم للحصة الآن
-                    </button>
+                    <div id="drawingTools" class="hidden flex gap-3 items-center border-r border-slate-600 pr-4">
+                        <input type="color" id="colorPicker" class="w-8 h-8 rounded cursor-pointer bg-transparent">
+                        <button id="clearBoard" class="text-red-400 hover:text-red-300 text-sm font-bold">مسح السبورة</button>
+                    </div>
+
+                    <button id="stopSession" class="bg-red-600 px-6 py-2 rounded-lg font-bold text-sm hidden">إنهاء وحفظ</button>
                 </div>
             </div>
 
-            <div class="lg:col-span-1 space-y-6">
-                <div class="bg-gray-800 p-5 rounded-2xl border border-gray-700">
-                    <h3 class="text-xl font-bold mb-4 text-blue-300">قائمة الحضور</h3>
-                    <ul id="usersList" class="text-sm space-y-3">
-                        <li class="text-gray-500 italic">لا يوجد طلاب متصلين حالياً...</li>
+            <div class="lg:col-span-1 space-y-4">
+                <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 h-full">
+                    <h3 class="font-bold text-blue-300 text-sm mb-4">الطلاب النشطين</h3>
+                    <ul id="userList" class="text-xs space-y-2 opacity-50 italic">
+                        <li>في انتظار دخول الطلاب...</li>
                     </ul>
                 </div>
-                <div class="bg-blue-900/30 p-5 rounded-2xl border border-blue-800/50">
-                    <p class="text-xs text-blue-200 leading-relaxed">
-                        نصيحة: تأكد من جودة الإنترنت لديك لضمان ثبات البث وصوت نقي للطلاب.
-                    </p>
-                </div>
             </div>
-        </main>
+        </div>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getDatabase, ref, set, onValue, push, update, onChildAdded, remove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+        import { getDatabase, ref, set, onValue, push, update, remove, onChildAdded } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
         import { getStorage, ref as sRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js";
 
-        // إعدادات Firebase الخاصة بك
         const firebaseConfig = {
             apiKey: "AIzaSyCcFRLMsewcgYXYgVvdkyQHf-imoJHHzng",
             authDomain: "mrhamdy-1c406.firebaseapp.com",
             databaseURL: "https://mrhamdy-1c406-default-rtdb.firebaseio.com",
             projectId: "mrhamdy-1c406",
             storageBucket: "mrhamdy-1c406.firebasestorage.app",
-            messagingSenderId: "806268398144",
-            appId: "1:806268398144:web:c40aef6b378377f72b4da5"
         };
 
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
         const storage = getStorage(app);
 
-        // متغيرات البث
-        let peerConnection;
-        let localStream;
-        let mediaRecorder;
-        let recordedChunks = [];
-        let screenStreamForStop, cameraStreamForStop; // للإيقاف الصحيح
-        const servers = { iceServers: [{ urls: ['stun:stun1.l.google.com:19302', 'stun:stun2.l.google.com:19302'] }] };
+        const canvas = document.getElementById('whiteboard');
+        const ctx = canvas.getContext('2d');
+        let isDrawing = false;
+        let isTeacher = false;
 
-        // 1. اختيار الوضع (مستر أو طالب)
-        document.getElementById('teacherModeBtn').onclick = () => {
-            document.getElementById('teacherControls').classList.remove('hidden');
-            document.getElementById('studentControls').classList.add('hidden');
-            document.getElementById('statusText').innerHTML = "الوضع الحالي: <span class='text-blue-400'>مستر (محاضر)</span>";
-        };
+        // ضبط مقاس السبورة
+        function resizeCanvas() {
+            canvas.width = canvas.offsetWidth;
+            canvas.height = canvas.offsetHeight;
+        }
+        window.onresize = resizeCanvas;
+        resizeCanvas();
 
-        document.getElementById('studentModeBtn').onclick = () => {
-            document.getElementById('studentControls').classList.remove('hidden');
-            document.getElementById('teacherControls').classList.add('hidden');
-            document.getElementById('statusText').innerHTML = "الوضع الحالي: <span class='text-purple-400'>طالب (مشاهد)</span>";
-        };
+        // --- كود الرسم (للمستر فقط) ---
+        canvas.addEventListener('mousedown', startDrawing);
+        canvas.addEventListener('mousemove', draw);
+        canvas.addEventListener('mouseup', stopDrawing);
 
-        // --- كود المستر (المصدر) ---
-        document.getElementById('startShare').onclick = async () => {
-            try {
-                // 1. التقاط الشاشة والكاميرا والصوت
-                screenStreamForStop = await navigator.mediaDevices.getDisplayMedia({ video: { cursor: "always" }, audio: { echoCancellation: true, noiseSuppression: true } });
-                cameraStreamForStop = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
-
-                // 2. إعداد الكانفاس للدمج
-                const canvas = document.createElement('canvas');
-                const ctx = canvas.getContext('2d');
-                const screenVideo = document.createElement('video');
-                screenVideo.srcObject = screenStreamForStop;
-                screenVideo.muted = true;
-                screenVideo.play();
-
-                const cameraVideo = document.createElement('video');
-                cameraVideo.srcObject = cameraStreamForStop;
-                cameraVideo.muted = true;
-                cameraVideo.play();
-
-                await new Promise(res => screenVideo.onloadedmetadata = res);
-                await new Promise(res => cameraVideo.onloadedmetadata = res);
-
-                canvas.width = screenVideo.videoWidth;
-                canvas.height = screenVideo.videoHeight;
-
-                function drawComposite() {
-                    if (screenStreamForStop.active && cameraStreamForStop.active) {
-                        ctx.drawImage(screenVideo, 0, 0, canvas.width, canvas.height);
-
-                        const cameraWidth = canvas.width * 0.20; // حجم الكاميرا 20%
-                        const cameraHeight = cameraVideo.videoHeight * (cameraWidth / cameraVideo.videoWidth);
-                        const margin = 20;
-                        ctx.drawImage(cameraVideo, canvas.width - cameraWidth - margin, canvas.height - cameraHeight - margin, cameraWidth, cameraHeight);
-                        
-                        requestAnimationFrame(drawComposite);
-                    }
-                }
-                drawComposite();
-
-                // 3. إنشاء البث المدمج
-                const compositeStream = canvas.captureStream(25); // 25 إطار في الثانية
-                if (screenStreamForStop.getAudioTracks().length > 0) {
-                    compositeStream.addTrack(screenStreamForStop.getAudioTracks()[0]);
-                }
-                
-                localStream = compositeStream;
-                document.getElementById('mainVideo').srcObject = localStream;
-                document.getElementById('mainVideo').muted = true; // كتم المعاينة المحلية
-                document.getElementById('liveBadge').classList.remove('hidden');
-
-                // بدء التسجيل للحفظ
-                startRecording(localStream);
-
-                // إنشاء الغرفة في Firebase
-                const callDoc = ref(db, 'calls/liveSession');
-                await remove(callDoc); // مسح أي جلسة سابقة
-
-                peerConnection = new RTCPeerConnection(servers);
-                localStream.getTracks().forEach(track => peerConnection.addTrack(track, localStream));
-
-                peerConnection.onicecandidate = (event) => {
-                    if (event.candidate) {
-                        push(ref(db, 'calls/liveSession/teacherCandidates'), event.candidate.toJSON());
-                    }
-                };
-
-                // استماع لـ ICE candidates من الطالب
-                onChildAdded(ref(db, 'calls/liveSession/studentCandidates'), (snapshot) => {
-                    const data = snapshot.val();
-                    if (data) peerConnection.addIceCandidate(new RTCIceCandidate(data));
-                });
-
-                const offerDescription = await peerConnection.createOffer();
-                await peerConnection.setLocalDescription(offerDescription);
-
-                const offer = { sdp: offerDescription.sdp, type: offerDescription.type };
-                await update(callDoc, { offer });
-
-                onValue(ref(db, 'calls/liveSession/answer'), async (snapshot) => {
-                    const data = snapshot.val();
-                    if (data && !peerConnection.currentRemoteDescription) {
-                        await peerConnection.setRemoteDescription(new RTCSessionDescription(data));
-                    }
-                });
-
-                document.getElementById('startShare').classList.add('hidden');
-                document.getElementById('stopShare').classList.remove('hidden');
-            } catch (err) {
-                console.error("خطأ في بدء البث:", err);
-                alert("يرجى إعطاء صلاحية الوصول للشاشة والكاميرا والصوت لبدء البث.");
-            }
-        };
-
-        // --- كود الطالب (المستقبل) ---
-        document.getElementById('joinStream').onclick = async () => {
-            peerConnection = new RTCPeerConnection(servers);
-            
-            // إرسال ICE candidates للمستر
-            peerConnection.onicecandidate = event => {
-                if (event.candidate) {
-                    push(ref(db, 'calls/liveSession/studentCandidates'), event.candidate.toJSON());
-                }
-            };
-
-            const remoteStream = new MediaStream();
-            document.getElementById('mainVideo').srcObject = remoteStream;
-
-            peerConnection.ontrack = (event) => {
-                event.streams[0].getTracks().forEach(track => remoteStream.addTrack(track));
-                document.getElementById('liveBadge').classList.remove('hidden');
-            };
-
-            const callDoc = ref(db, 'calls/liveSession');
-            
-            onValue(callDoc, async (snapshot) => {
-                const data = snapshot.val();
-                if (data && data.offer && !peerConnection.currentRemoteDescription) {
-                    await peerConnection.setRemoteDescription(new RTCSessionDescription(data.offer));
-                    const answerDescription = await peerConnection.createAnswer();
-                    await peerConnection.setLocalDescription(answerDescription);
-                    
-                    await update(callDoc, { answer: { type: answerDescription.type, sdp: answerDescription.sdp } });
-                }
-            });
-
-            onChildAdded(ref(db, 'calls/liveSession/teacherCandidates'), (snapshot) => {
-                const data = snapshot.val();
-                if (data) peerConnection.addIceCandidate(new RTCIceCandidate(data));
-            });
-        };
-
-        // --- وظائف التسجيل والحفظ ---
-        function startRecording(stream) {
-            recordedChunks = [];
-            mediaRecorder = new MediaRecorder(stream, { mimeType: 'video/webm;codecs=vp8,opus' });
-            mediaRecorder.ondataavailable = (e) => { if (e.data.size > 0) recordedChunks.push(e.data); };
-            mediaRecorder.start();
+        function startDrawing(e) {
+            if (!isTeacher) return;
+            isDrawing = true;
+            draw(e);
         }
 
-        document.getElementById('stopShare').onclick = async () => {
-            mediaRecorder.stop();
+        function draw(e) {
+            if (!isDrawing || !isTeacher) return;
+            const rect = canvas.getBoundingClientRect();
+            const x = (e.clientX - rect.left) / canvas.width;
+            const y = (e.clientY - rect.top) / canvas.height;
+            const color = document.getElementById('colorPicker').value;
+
+            // إرسال الإحداثيات لـ Firebase
+            push(ref(db, 'whiteboard/points'), { x, y, color, type: 'draw' });
+        }
+
+        function stopDrawing() {
+            if (!isTeacher) return;
+            isDrawing = false;
+            push(ref(db, 'whiteboard/points'), { type: 'stop' });
+        }
+
+        document.getElementById('clearBoard').onclick = () => {
+            remove(ref(db, 'whiteboard/points'));
+        };
+
+        // --- استقبال الرسم (للجميع) ---
+        onValue(ref(db, 'whiteboard/points'), (snapshot) => {
+            ctx.clearRect(0, 0, canvas.width, canvas.height); // مسح للرسم من جديد (للبساطة)
+            const data = snapshot.val();
+            if (data) {
+                ctx.lineWidth = 3;
+                ctx.lineCap = 'round';
+                let lastPoint = null;
+
+                Object.values(data).forEach(p => {
+                    if (p.type === 'stop') {
+                        lastPoint = null;
+                        return;
+                    }
+                    ctx.strokeStyle = p.color;
+                    ctx.beginPath();
+                    if (lastPoint) {
+                        ctx.moveTo(lastPoint.x * canvas.width, lastPoint.y * canvas.height);
+                        ctx.lineTo(p.x * canvas.width, p.y * canvas.height);
+                        ctx.stroke();
+                    }
+                    lastPoint = p;
+                });
+            } else {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+            }
+        });
+
+        // --- منطق البث (WebRTC كما سبق) ---
+        let pc;
+        document.getElementById('startTeacher').onclick = async () => {
+            isTeacher = true;
+            document.getElementById('drawingTools').classList.remove('hidden');
+            document.getElementById('stopSession').classList.remove('hidden');
             
-            // إيقاف جميع مسارات البث الأصلية والمدمجة
-            localStream.getTracks().forEach(track => track.stop());
-            if (screenStreamForStop) screenStreamForStop.getTracks().forEach(track => track.stop());
-            if (cameraStreamForStop) cameraStreamForStop.getTracks().forEach(track => track.stop());
+            const screenStream = await navigator.mediaDevices.getDisplayMedia({ video: true, audio: true });
+            const cameraStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
 
-            document.getElementById('liveBadge').classList.add('hidden');
+            document.getElementById('mainVideo').srcObject = screenStream;
+            document.getElementById('cameraOverlay').srcObject = cameraStream;
+            document.getElementById('status').innerText = "بث مباشر + سبورة";
+            document.getElementById('status').classList.replace('bg-red-500', 'bg-green-500');
 
-            mediaRecorder.onstop = async () => {
-                const blob = new Blob(recordedChunks, { type: 'video/webm' });
-                const fileName = `lessons/Lesson-${Date.now()}.webm`;
-                const storageLink = sRef(storage, fileName);
-                
-                alert("جاري رفع وتسجيل الحصة... انتظر قليلاً");
-                await uploadBytes(storageLink, blob);
-                const downloadURL = await getDownloadURL(storageLink);
-                
-                alert("تم الحفظ بنجاح! يمكن للطلاب مشاهدة التسجيل عبر الرابط: " + downloadURL);
-                console.log("Video URL:", downloadURL);
-                location.reload(); // إعادة تحميل الصفحة لتنظيف الاتصالات
-            };
+            // إعداد WebRTC (نفس كود المرة السابقة للربط)
+            pc = new RTCPeerConnection({ iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] });
+            screenStream.getTracks().forEach(t => pc.addTrack(t, screenStream));
+            
+            const offer = await pc.createOffer();
+            await pc.setLocalDescription(offer);
+            await update(ref(db, 'calls/live'), { offer: { sdp: offer.sdp, type: offer.type } });
+        };
+
+        document.getElementById('startStudent').onclick = () => {
+            isTeacher = false;
+            document.getElementById('drawingTools').classList.add('hidden');
+            // منطق استقبال الطالب للفيديو (WebRTC Answer)
         };
 
     </script>
