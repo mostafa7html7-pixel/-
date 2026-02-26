@@ -88,6 +88,7 @@
         let localStream;
         let mediaRecorder;
         let recordedChunks = [];
+        let screenStreamForStop, cameraStreamForStop; // للإيقاف الصحيح
         const servers = { iceServers: [{ urls: ['stun:stun1.l.google.com:19302', 'stun:stun2.l.google.com:19302'] }] };
 
         // 1. اختيار الوضع (مستر أو طالب)
@@ -106,9 +107,52 @@
         // --- كود المستر (المصدر) ---
         document.getElementById('startShare').onclick = async () => {
             try {
-                // التقاط الشاشة والصوت
-                localStream = await navigator.mediaDevices.getDisplayMedia({ video: true, audio: true });
+                // 1. التقاط الشاشة والكاميرا والصوت
+                screenStreamForStop = await navigator.mediaDevices.getDisplayMedia({ video: { cursor: "always" }, audio: { echoCancellation: true, noiseSuppression: true } });
+                cameraStreamForStop = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
+
+                // 2. إعداد الكانفاس للدمج
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                const screenVideo = document.createElement('video');
+                screenVideo.srcObject = screenStreamForStop;
+                screenVideo.muted = true;
+                screenVideo.play();
+
+                const cameraVideo = document.createElement('video');
+                cameraVideo.srcObject = cameraStreamForStop;
+                cameraVideo.muted = true;
+                cameraVideo.play();
+
+                await new Promise(res => screenVideo.onloadedmetadata = res);
+                await new Promise(res => cameraVideo.onloadedmetadata = res);
+
+                canvas.width = screenVideo.videoWidth;
+                canvas.height = screenVideo.videoHeight;
+
+                function drawComposite() {
+                    if (screenStreamForStop.active && cameraStreamForStop.active) {
+                        ctx.drawImage(screenVideo, 0, 0, canvas.width, canvas.height);
+
+                        const cameraWidth = canvas.width * 0.20; // حجم الكاميرا 20%
+                        const cameraHeight = cameraVideo.videoHeight * (cameraWidth / cameraVideo.videoWidth);
+                        const margin = 20;
+                        ctx.drawImage(cameraVideo, canvas.width - cameraWidth - margin, canvas.height - cameraHeight - margin, cameraWidth, cameraHeight);
+                        
+                        requestAnimationFrame(drawComposite);
+                    }
+                }
+                drawComposite();
+
+                // 3. إنشاء البث المدمج
+                const compositeStream = canvas.captureStream(25); // 25 إطار في الثانية
+                if (screenStreamForStop.getAudioTracks().length > 0) {
+                    compositeStream.addTrack(screenStreamForStop.getAudioTracks()[0]);
+                }
+                
+                localStream = compositeStream;
                 document.getElementById('mainVideo').srcObject = localStream;
+                document.getElementById('mainVideo').muted = true; // كتم المعاينة المحلية
                 document.getElementById('liveBadge').classList.remove('hidden');
 
                 // بدء التسجيل للحفظ
@@ -121,12 +165,17 @@
                 peerConnection = new RTCPeerConnection(servers);
                 localStream.getTracks().forEach(track => peerConnection.addTrack(track, localStream));
 
-                // تبادل الـ ICE Candidates
                 peerConnection.onicecandidate = (event) => {
                     if (event.candidate) {
                         push(ref(db, 'calls/liveSession/teacherCandidates'), event.candidate.toJSON());
                     }
                 };
+
+                // استماع لـ ICE candidates من الطالب
+                onChildAdded(ref(db, 'calls/liveSession/studentCandidates'), (snapshot) => {
+                    const data = snapshot.val();
+                    if (data) peerConnection.addIceCandidate(new RTCIceCandidate(data));
+                });
 
                 const offerDescription = await peerConnection.createOffer();
                 await peerConnection.setLocalDescription(offerDescription);
@@ -134,12 +183,10 @@
                 const offer = { sdp: offerDescription.sdp, type: offerDescription.type };
                 await update(callDoc, { offer });
 
-                // استماع لردود الطلاب
                 onValue(ref(db, 'calls/liveSession/answer'), async (snapshot) => {
                     const data = snapshot.val();
-                    if (!peerConnection.currentRemoteDescription && data) {
-                        const answerDescription = new RTCSessionDescription(data);
-                        await peerConnection.setRemoteDescription(answerDescription);
+                    if (data && !peerConnection.currentRemoteDescription) {
+                        await peerConnection.setRemoteDescription(new RTCSessionDescription(data));
                     }
                 });
 
@@ -147,7 +194,7 @@
                 document.getElementById('stopShare').classList.remove('hidden');
             } catch (err) {
                 console.error("خطأ في بدء البث:", err);
-                alert("يرجى إعطاء صلاحية الوصول للشاشة والصوت");
+                alert("يرجى إعطاء صلاحية الوصول للشاشة والكاميرا والصوت لبدء البث.");
             }
         };
 
@@ -155,6 +202,13 @@
         document.getElementById('joinStream').onclick = async () => {
             peerConnection = new RTCPeerConnection(servers);
             
+            // إرسال ICE candidates للمستر
+            peerConnection.onicecandidate = event => {
+                if (event.candidate) {
+                    push(ref(db, 'calls/liveSession/studentCandidates'), event.candidate.toJSON());
+                }
+            };
+
             const remoteStream = new MediaStream();
             document.getElementById('mainVideo').srcObject = remoteStream;
 
@@ -192,7 +246,12 @@
 
         document.getElementById('stopShare').onclick = async () => {
             mediaRecorder.stop();
+            
+            // إيقاف جميع مسارات البث الأصلية والمدمجة
             localStream.getTracks().forEach(track => track.stop());
+            if (screenStreamForStop) screenStreamForStop.getTracks().forEach(track => track.stop());
+            if (cameraStreamForStop) cameraStreamForStop.getTracks().forEach(track => track.stop());
+
             document.getElementById('liveBadge').classList.add('hidden');
 
             mediaRecorder.onstop = async () => {
